@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,7 +22,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-
 @Composable
 fun JayLabsTextField(
     value: String,
@@ -29,7 +29,10 @@ fun JayLabsTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
+    textStyle: TextStyle = LocalTextStyle.current.copy(
+        color = Color.Black, // Ensures text is always visible
+        fontWeight = FontWeight.Medium
+    ),
     label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -46,15 +49,16 @@ fun JayLabsTextField(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = RoundedCornerShape(10.dp),
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors().copy(
-        unfocusedContainerColor = Color.LightGray.copy(0.4f),
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(
+        unfocusedContainerColor = Color(0xFFF2F2F2),  // Light Gray
         focusedContainerColor = Color.White,
-
-        )
-
+        cursorColor = Color(0xFFFF9800),  // Orange
+        focusedBorderColor = Color(0xFFFF9800),  // Orange
+        unfocusedBorderColor = Color.Gray,
+        errorBorderColor = Color.Red
+    )
 ) {
     Column {
-
         label?.let {
             Row {
                 Spacer(Modifier.size(8.dp))
@@ -65,11 +69,12 @@ fun JayLabsTextField(
         OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            modifier = modifier,
+            modifier = modifier.padding(4.dp), // Small padding for better alignment
             enabled = enabled,
             readOnly = readOnly,
             textStyle = textStyle.copy(
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                fontSize = LocalTextStyle.current.fontSize // Keeps text size consistent
             ),
             placeholder = placeholder,
             leadingIcon = leadingIcon,
@@ -87,8 +92,5 @@ fun JayLabsTextField(
             shape = shape,
             colors = colors
         )
-
     }
-
-
 }

@@ -26,6 +26,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,17 +66,20 @@ fun DrawerContent(
     navController: NavController,
     scope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState,
-     drawerViewModel: DrawerViewModel= hiltViewModel()
+    drawerViewModel: DrawerViewModel = hiltViewModel()
 ) {
     val userId = firebaseAuth.currentUser?.uid
     val userName = drawerViewModel.userName.collectAsState()
 
-
+    val backgroundColor = MaterialTheme.colorScheme.surface
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val dividerColor = MaterialTheme.colorScheme.outlineVariant
+    val buttonColor = MaterialTheme.colorScheme.error // Red button for logout
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(backgroundColor) // ✅ Dynamic background
             .padding(16.dp)
     ) {
         // Profile Section
@@ -84,16 +89,17 @@ fun DrawerContent(
                 contentDescription = "User Icon",
                 modifier = Modifier
                     .size(60.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                colorFilter = tint(MaterialTheme.colorScheme.primary)
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = "Hello,", color = Color.Gray)
-                Text(text = userName.value, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Hello,", color = textColor.copy(alpha = 0.7f))
+                Text(text = userName.value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = textColor)
             }
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(color = dividerColor, modifier = Modifier.padding(vertical = 8.dp))
 
         // Menu Items
         Column {
@@ -105,7 +111,7 @@ fun DrawerContent(
             DrawerItem("Help", Icons.Default.Info) {}
         }
 
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(color = dividerColor, modifier = Modifier.padding(vertical = 8.dp))
 
         // Reports Section
         LazyColumn(modifier = Modifier.weight(1f)) {
@@ -117,19 +123,20 @@ fun DrawerContent(
                         .fillMaxWidth()
                         .align(Alignment.CenterHorizontally),
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = textColor
                 )
             }
             items(List(4) { index -> "Report ${index + 1}" to "Description of Report ${index + 1}" }) { (name, desc) ->
                 ReportItem(reportName = name, reportDescription = desc) {
                     navController.navigate("${Route.ReportDetails.route}/$name/$desc")
-                    scope.launch {
-                        drawerState.close()
-                    }
+                    scope.launch { drawerState.close() }
                 }
             }
         }
+
         var showAlertDialog by remember { mutableStateOf(false) }
+
         // Logout Button
         Button(
             onClick = {
@@ -138,22 +145,19 @@ fun DrawerContent(
                 } else {
                     navController.navigate(Route.AuthScreen.route)
                 }
-
                 scope.launch { drawerState.close() }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+            colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         ) {
-            Text(text = if (userId != null) "Sign Out" else "Sign In", color = Color.White)
+            Text(text = if (userId != null) "Sign Out" else "Sign In", color = MaterialTheme.colorScheme.onError)
         }
+
         if (showAlertDialog) {
             CustomAlertDialog(
-
-                onDismiss = {
-                    showAlertDialog = false
-                }
+                onDismiss = { showAlertDialog = false }
             ) {
                 showAlertDialog = false
                 navController.navigate(Route.AuthScreen.route)
@@ -161,12 +165,15 @@ fun DrawerContent(
             }
         }
     }
-
 }
+
 
 
 @Composable
 fun DrawerItem(title: String, icon: ImageVector, onClick: () -> Unit) {
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val iconColor = MaterialTheme.colorScheme.primary
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -174,8 +181,9 @@ fun DrawerItem(title: String, icon: ImageVector, onClick: () -> Unit) {
             .clickable { onClick() }
             .padding(12.dp)
     ) {
-        Icon(icon, contentDescription = title, tint = Color.Gray)
+        Icon(icon, contentDescription = title, tint = iconColor) // ✅ Dynamic icon color
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = title, fontSize = 16.sp)
+        Text(text = title, fontSize = 16.sp, color = textColor) // ✅ Dynamic text color
     }
 }
+

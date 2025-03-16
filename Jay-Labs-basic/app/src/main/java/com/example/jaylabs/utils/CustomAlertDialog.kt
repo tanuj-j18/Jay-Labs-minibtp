@@ -17,7 +17,7 @@ import androidx.compose.ui.window.DialogProperties
 fun CustomAlertDialog(onDismiss: () -> Unit, onExit: () -> Unit) {
     Dialog(
         onDismissRequest = { onDismiss() }, properties = DialogProperties(
-            dismissOnBackPress = false, dismissOnClickOutside = false
+            dismissOnBackPress = true, dismissOnClickOutside = true
         )
     ) {
         Card(
@@ -26,12 +26,16 @@ fun CustomAlertDialog(onDismiss: () -> Unit, onExit: () -> Unit) {
                 .fillMaxWidth()
                 .padding(0.dp)
                 .height(IntrinsicSize.Min),
-            elevation = CardDefaults.cardElevation(0.dp)
+            elevation = CardDefaults.cardElevation(2.dp), // Small elevation for depth
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface, // Use surface color for background
+                contentColor = contentColorFor(MaterialTheme.colorScheme.surface)
+            )
         ) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .background(Color.White)
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 Text(
                     text = "Logout",
@@ -41,17 +45,25 @@ fun CustomAlertDialog(onDismiss: () -> Unit, onExit: () -> Unit) {
                         .fillMaxWidth(),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary // Primary color for title emphasis
                 )
+
                 Text(
                     text = "Are you sure you want to logout?",
                     modifier = Modifier
                         .padding(8.dp, 2.dp, 8.dp, 16.dp)
                         .align(Alignment.CenterHorizontally)
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f) // Slightly muted text
                 )
-                Divider(color = Color.Gray, modifier = Modifier.fillMaxWidth().height(1.dp))
+
+                Divider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.fillMaxWidth().height(1.dp)
+                )
+
                 Row(Modifier.padding(top = 0.dp)) {
                     TextButton(
                         onClick = { onDismiss() },
@@ -59,16 +71,21 @@ fun CustomAlertDialog(onDismiss: () -> Unit, onExit: () -> Unit) {
                             .weight(1f)
                             .height(48.dp)
                     ) {
-                        Text(text = "Cancel", color = Color.Blue)
+                        Text(text = "Cancel", color = MaterialTheme.colorScheme.primary)
                     }
-                    Divider(color = Color.Gray, modifier = Modifier.fillMaxHeight().width(1.dp))
+
+                    Divider(
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier.fillMaxHeight().width(1.dp)
+                    )
+
                     TextButton(
                         onClick = { onExit.invoke() },
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp)
                     ) {
-                        Text(text = "Logout", color = Color.Red)
+                        Text(text = "Logout", color = MaterialTheme.colorScheme.error) // Red for destructive action
                     }
                 }
             }

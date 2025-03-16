@@ -1,5 +1,6 @@
 package com.example.jaylabs.pastreports
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,20 +32,23 @@ fun PastReportsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)  // ✅ Accounts for Scaffold padding
-                .padding(horizontal = 16.dp, vertical = 70.dp),  // ✅ Adjusts for left-right margins
+                .padding(start = 16.dp, top = 70.dp, end = 16.dp),  // ✅ Adjusts for left-right margins
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
 
-
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),  // ✅ Full height scrolling
-                contentPadding = PaddingValues(bottom = 16.dp) // ✅ Prevents bottom content clipping
+                contentPadding = PaddingValues(bottom = 8.dp) // ✅ Prevents bottom content clipping
             ) {
                 item {
-                    Text(text = "Your Past Reports", modifier = Modifier.fillMaxWidth(), fontSize = 22.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text(
+                        text = "Your Past Reports", modifier = Modifier.fillMaxWidth(),
+                        fontSize = 22.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
                 items(reports) { (reportName, reportDescription) ->
@@ -67,20 +71,25 @@ fun ReportItem(reportName: String, reportDescription: String, onClick: () -> Uni
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF3E5F5))
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant // ✅ Softer background for light mode
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // ✅ Adds slight shadow for depth
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = reportName,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface // ✅ High contrast text
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = reportDescription,
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f) // ✅ Balanced contrast
             )
         }
     }
 }
+

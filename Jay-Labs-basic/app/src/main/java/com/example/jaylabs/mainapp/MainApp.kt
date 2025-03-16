@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.jaylabs.home.HomeScreen
 import com.example.jaylabs.auth.AuthScreen
+import com.example.jaylabs.auth.ForgotPasswordScreen
 import com.example.jaylabs.auth.login.LogInScreen
 import com.example.jaylabs.auth.signup.SignUpScreen
 import com.example.jaylabs.pastreports.PastReportsScreen
@@ -49,7 +50,7 @@ fun MainApp(
             AuthScreen(navController = navController)
         }
         composable(Route.HomeScreen.route) {
-          HomeScreen()
+            HomeScreen()
         }
         composable(Route.LogIn.route) {
             LogInScreen(navController = navController)
@@ -65,6 +66,10 @@ fun MainApp(
             val reportDescription = backStackEntry.arguments?.getString("reportDescription")
             ReportDetailScreen(reportName = reportName, reportDescription = reportDescription)
         }
+        composable(Route.ForgotPassword.route) {
+            ForgotPasswordScreen(navController = navController)
+        }
+
 
     }
 }
