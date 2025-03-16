@@ -1,6 +1,7 @@
 package com.example.jaylabs.utils
 
 
+import CustomAlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,9 +31,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.jaylabs.R
 import com.example.jaylabs.mainapp.Route
@@ -58,20 +63,13 @@ fun DrawerContent(
     firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
     navController: NavController,
     scope: CoroutineScope = rememberCoroutineScope(),
-    drawerState: DrawerState
+    drawerState: DrawerState,
+     drawerViewModel: DrawerViewModel= hiltViewModel()
 ) {
     val userId = firebaseAuth.currentUser?.uid
-    val userName = remember { mutableStateOf("User") }
+    val userName = drawerViewModel.userName.collectAsState()
 
-    // Fetch user data efficiently
-    LaunchedEffect(userId) {
-        userId?.let { uid ->
-            firestore.collection("users").document(uid).get()
-                .addOnSuccessListener { document ->
-                    userName.value = document.getString("fullName") ?: "User"
-                }
-        }
-    }
+
 
     Column(
         modifier = Modifier
@@ -124,19 +122,23 @@ fun DrawerContent(
             }
             items(List(4) { index -> "Report ${index + 1}" to "Description of Report ${index + 1}" }) { (name, desc) ->
                 ReportItem(reportName = name, reportDescription = desc) {
-                   navController.navigate("${Route.ReportDetails.route}/$name/$desc")
+                    navController.navigate("${Route.ReportDetails.route}/$name/$desc")
                     scope.launch {
                         drawerState.close()
                     }
                 }
             }
         }
-
+        var showAlertDialog by remember { mutableStateOf(false) }
         // Logout Button
         Button(
             onClick = {
-                firebaseAuth.signOut()
-                navController.navigate(Route.AuthScreen.route)
+                if (userId != null) {
+                    showAlertDialog = true
+                } else {
+                    navController.navigate(Route.AuthScreen.route)
+                }
+
                 scope.launch { drawerState.close() }
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
@@ -146,7 +148,20 @@ fun DrawerContent(
         ) {
             Text(text = if (userId != null) "Sign Out" else "Sign In", color = Color.White)
         }
+        if (showAlertDialog) {
+            CustomAlertDialog(
+
+                onDismiss = {
+                    showAlertDialog = false
+                }
+            ) {
+                showAlertDialog = false
+                navController.navigate(Route.AuthScreen.route)
+                firebaseAuth.signOut()
+            }
+        }
     }
+
 }
 
 
