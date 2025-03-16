@@ -20,7 +20,7 @@ dependencyResolutionManagement {
 }
 
 
-//chan
+
 rootProject.name = "Jay Labs"
 include(":app")
  
