@@ -27,7 +27,7 @@ fun MainApp(
 ) {
     val user = auth.currentUser
     val startDestination = if (user == null) Route.AuthScreen.route else Route.HomeScreen.route
-
+    //ch
     NavHost(
         navController = navController,
         startDestination = startDestination,
