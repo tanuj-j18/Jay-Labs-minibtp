@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
             val topBarHiddenRoutes = listOf(
                 Route.AuthScreen.route, Route.LogIn.route, Route.SignUp.route,
+                Route.ForgotPassword.route
             )
 
             val drawerState =  rememberDrawerState(DrawerValue.Closed)

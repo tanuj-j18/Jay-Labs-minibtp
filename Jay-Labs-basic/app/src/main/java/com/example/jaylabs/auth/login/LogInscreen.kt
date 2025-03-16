@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberTopAppBarState
@@ -45,6 +46,7 @@ import androidx.navigation.NavHostController
 
 import com.example.jaylabs.auth.AuthResult
 import com.example.jaylabs.R
+import com.example.jaylabs.mainapp.MainApp
 import com.example.jaylabs.mainapp.Route
 import com.example.jaylabs.ui.theme.Orange
 import com.example.jaylabs.utils.JayLabsTextField
@@ -168,7 +170,9 @@ fun LogInScreen(
             Spacer(Modifier.size(16.dp))
 
             // Forgot Password Button
-            TextButton(onClick = { /* Navigate to Forgot Password Screen */ }) {
+            TextButton(onClick = {
+                navController.navigate(Route.ForgotPassword.route)
+            }) {
                 Text(text = "Forgot password?", color = Orange)
             }
 
@@ -199,7 +203,7 @@ fun LogInScreen(
                 name = "Sign Up",
                 text = "Do Not Have Account",
                 colorName = Orange,
-                colorText = Color.Black
+                colorText = MaterialTheme.colorScheme.secondary
             )
 
 
