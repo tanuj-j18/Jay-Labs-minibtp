@@ -11,4 +11,3 @@ sealed class Route(val route: String) {
 
 }
 //routes here
-//all route are here
