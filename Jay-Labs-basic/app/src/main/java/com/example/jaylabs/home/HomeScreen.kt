@@ -51,7 +51,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
-        )
+        ) 
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -61,6 +61,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             selectedImageUri = selectedImageUri,
             onImageClick = { imagePickerLauncher.launch("image/*") }
         )
+
+
+        //
 
         Spacer(modifier = Modifier.height(16.dp))
 
