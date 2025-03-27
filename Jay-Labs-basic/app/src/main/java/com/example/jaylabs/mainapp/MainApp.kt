@@ -50,7 +50,10 @@ fun MainApp(
             AuthScreen(navController = navController)
         }
         composable(Route.HomeScreen.route) {
-            HomeScreen()
+            HomeScreen(
+              navController=  navController,
+
+            )
         }
         composable(Route.LogIn.route) {
             LogInScreen(navController = navController)
@@ -61,10 +64,10 @@ fun MainApp(
         composable(Route.PastReports.route) {
             PastReportsScreen(navController = navController)
         }
-        composable("${Route.ReportDetails.route}/{reportName}/{reportDescription}") { backStackEntry ->
-            val reportName = backStackEntry.arguments?.getString("reportName")
-            val reportDescription = backStackEntry.arguments?.getString("reportDescription")
-            ReportDetailScreen(reportName = reportName, reportDescription = reportDescription)
+        composable("${Route.ReportDetails.route}/{id}") { backStackEntry ->
+            val reportId = backStackEntry.arguments?.getString("id")
+
+            ReportDetailScreen(reportId = reportId?.toIntOrNull())
         }
         composable(Route.ForgotPassword.route) {
             ForgotPasswordScreen(navController = navController)

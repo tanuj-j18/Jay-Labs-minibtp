@@ -2,11 +2,15 @@ package com.example.jaylabs.network
 
 
 
+import android.app.Application
+import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+
+
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -38,7 +42,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://fakestoreapi.com/")
+            .baseUrl("http://10.0.2.2:5000/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -57,5 +61,10 @@ object NetworkModule {
     @Singleton
     fun provideFirebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
+@Provides
+@Singleton
+fun provideContext(application: Application): Context {
+    return application.applicationContext
+}
 
 }

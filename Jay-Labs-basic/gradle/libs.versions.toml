@@ -11,7 +11,7 @@ composeBom = "2024.09.00"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 
-hiltAndroid = "2.52"
+hiltAndroid = "2.55"
 hiltAndroidCompiler = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 

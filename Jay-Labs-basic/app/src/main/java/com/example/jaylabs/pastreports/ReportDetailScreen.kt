@@ -9,25 +9,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun ReportDetailScreen(
-    modifier: Modifier = Modifier,
-    reportName: String?,
-    reportDescription: String?
+    reportId: Int?
 ) {
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = reportName ?: "", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = reportDescription?:"", fontSize = 16.sp)
+        Text(
+            text = "Report Detail $reportId",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp))
+
     }
 }
