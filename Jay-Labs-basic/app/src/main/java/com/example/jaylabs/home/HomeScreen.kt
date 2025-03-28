@@ -108,29 +108,33 @@ fun HomeScreen(modifier: Modifier = Modifier,viewModel: HomeViewModel= hiltViewM
 
         }
 
-        when (homeUiState) {
+        when (val state = homeUiState) { // Safe smart casting
             is HomeViewModel.HomeEvent.Empty -> {
                 // Handle empty state if necessary
             }
 
             is HomeViewModel.HomeEvent.Error -> {
-                val errorMessage = (homeUiState as HomeViewModel.HomeEvent.Error).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-
+                LaunchedEffect(state) {
+                    Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                }
             }
 
             is HomeViewModel.HomeEvent.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.size(80.dp).align(Alignment.Center))
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(modifier = Modifier.size(80.dp))
+                }
             }
 
             is HomeViewModel.HomeEvent.Success -> {
-                val data =
-                    (homeUiState as HomeViewModel.HomeEvent.Success<ModelResponse>).data.prediction
-                Toast.makeText(context, "Prediction $data", Toast.LENGTH_SHORT).show()
-                navController.navigate("${Route.ReportDetails.route}/$data")
-
+                LaunchedEffect(state) {
+                    val data = state.data.prediction
+                    Toast.makeText(context, "Prediction $data", Toast.LENGTH_SHORT).show()
+                    navController.navigate("${Route.ReportDetails.route}/$data")
+                    viewModel.resetState()
+                }
             }
         }
+
 
     }
 }

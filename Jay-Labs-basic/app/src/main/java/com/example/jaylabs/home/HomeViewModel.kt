@@ -9,8 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.jaylabs.models.ModelResponse
 import com.example.jaylabs.network.JayLabsApi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,7 +36,7 @@ class HomeViewModel @Inject constructor(
         if(imageUri==null) return
         _modelResponse.value = HomeEvent.Loading
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val appContext = context as Context  // ✅ Cast Application to Context
                 val file = File(appContext.cacheDir, "upload.jpg") // Use app cache directory
@@ -58,6 +60,9 @@ class HomeViewModel @Inject constructor(
                 _modelResponse.value = HomeEvent.Error("Exception: ${e.message}")
             }
         }
+    }
+    fun resetState() {
+        _modelResponse.value = HomeEvent.Empty
     }
 
     sealed class HomeEvent<out T> {

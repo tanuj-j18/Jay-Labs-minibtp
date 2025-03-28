@@ -51,12 +51,13 @@ fun PastReportsScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
-                items(reports) { (reportName, reportDescription) ->
+                items(reports.size) {
+                    val (reportName, reportDescription)=reports[it]
                     ReportItem(
                         reportName = reportName,
                         reportDescription = reportDescription
                     ) {
-                        navController.navigate("${Route.ReportDetails.route}/$reportName/$reportDescription")
+                        navController.navigate("${Route.ReportDetails.route}/${it+1}")
                     }
                 }
             }
