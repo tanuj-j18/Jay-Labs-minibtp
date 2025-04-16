@@ -98,11 +98,12 @@ fun HomeScreen(modifier: Modifier = Modifier,viewModel: HomeViewModel= hiltViewM
 
 // Anatomical Site Input
             Spacer(modifier = Modifier.height(8.dp))
-            JayLabsTextField(
-                value = selectedSite,
-                onValueChange = { selectedSite = it },
-                label = { Text("Anatomical Site (e.g., torso, head, etc.)") },
-                modifier = Modifier.fillMaxWidth()
+            AnatomicalSiteDropdown(
+                selectedSite = selectedSite,          // Pass the state variable to display
+                onSiteSelected = { newSelection ->    // Provide the lambda to update the state
+                    selectedSite = newSelection
+                },
+                modifier = Modifier.fillMaxWidth()    // Apply the same modifier
             )
 
 
@@ -195,6 +196,81 @@ fun ImagePickerBox(selectedImageUri: Uri?, onImageClick: () -> Unit) {
                 contentDescription = "Add Image",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 modifier = Modifier.size(50.dp)
+            )
+        }
+    }
+}
+
+
+// Define the list outside the composable if it's static
+private val anatomicalSites = listOf(
+    "head/neck",
+    "upper extremity",
+    "lower extremity",
+    "torso",
+    "palms/soles",
+    "oral/genital"
+)
+
+@OptIn(ExperimentalMaterial3Api::class) // Required for ExposedDropdownMenuBox
+@Composable
+fun AnatomicalSiteDropdown(
+    selectedSite: String,
+    onSiteSelected: (String) -> Unit,
+    modifier: Modifier = Modifier // Allow passing modifiers from the caller
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }, // Standard way to toggle
+        modifier = modifier // Apply passed-in modifier to the Box
+    ) {
+        TextField(
+            value = selectedSite,
+            onValueChange = {}, // No change needed as it's read-only
+            label = { Text("Anatomical Site") },
+            readOnly = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(), // Use default dropdown colors
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor() // **** THIS IS THE IMPORTANT CHANGE ****
+            // Tells the Box that this TextField is the anchor for the menu
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false } // Close when dismissed
+        ) {
+            anatomicalSites.forEach { site ->
+                DropdownMenuItem(
+                    text = { Text(site) }, // Use the 'text' lambda for content
+                    onClick = {
+                        onSiteSelected(site)
+                        expanded = false // Close menu after selection
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding // Default padding
+                )
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun AnatomicalSiteDropdownPreview() {
+    var selected by remember { mutableStateOf(anatomicalSites[0]) } // Start with a default selection
+
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxWidth()) {
+            AnatomicalSiteDropdown(
+                selectedSite = selected,
+                onSiteSelected = { selected = it },
+                modifier = Modifier.padding(16.dp) // Add padding in preview
             )
         }
     }
