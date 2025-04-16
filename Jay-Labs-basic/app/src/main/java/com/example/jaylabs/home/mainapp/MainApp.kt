@@ -1,4 +1,4 @@
-package com.example.jaylabs.mainapp
+package com.example.jaylabs.home.mainapp
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -64,10 +64,10 @@ fun MainApp(
         composable(Route.PastReports.route) {
             PastReportsScreen(navController = navController)
         }
-        composable("${Route.ReportDetails.route}/{id}") { backStackEntry ->
-            val reportId = backStackEntry.arguments?.getString("id")
+        composable("${Route.ReportDetails.route}/{data}") { backStackEntry ->
+            val data = backStackEntry.arguments?.getString("data")
 
-            ReportDetailScreen(reportId = reportId?.toIntOrNull())
+            ReportDetailScreen(data =data )
         }
         composable(Route.ForgotPassword.route) {
             ForgotPasswordScreen(navController = navController)

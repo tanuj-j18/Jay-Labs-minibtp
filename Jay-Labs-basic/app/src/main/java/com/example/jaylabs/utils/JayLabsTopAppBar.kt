@@ -1,6 +1,5 @@
 package com.example.jaylabs.utils
 
-import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jaylabs.R
-import com.example.jaylabs.mainapp.Route
+import com.example.jaylabs.home.mainapp.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

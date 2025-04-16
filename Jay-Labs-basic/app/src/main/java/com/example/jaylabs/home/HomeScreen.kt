@@ -15,7 +15,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,8 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.rememberAsyncImagePainter
 import com.example.jaylabs.R
-import com.example.jaylabs.mainapp.Route
-import com.example.jaylabs.models.ModelResponse
+import com.example.jaylabs.home.mainapp.Route
 import com.example.jaylabs.utils.JayLabsTextField
 
 @Composable
@@ -37,6 +35,9 @@ fun HomeScreen(modifier: Modifier = Modifier,viewModel: HomeViewModel= hiltViewM
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var description by remember { mutableStateOf("") }
     val homeUiState by viewModel.modelResponse.collectAsStateWithLifecycle()
+    var selectedSex by remember { mutableStateOf("male") }
+    var selectedAge by remember { mutableStateOf("") }
+    var selectedSite by remember { mutableStateOf("torso") }
 
     LaunchedEffect(Unit) {
 
@@ -78,20 +79,48 @@ fun HomeScreen(modifier: Modifier = Modifier,viewModel: HomeViewModel= hiltViewM
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Description Input
+            // Sex Dropdown
             JayLabsTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text("Add Label", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                value = selectedSex,
+                onValueChange = { selectedSex = it },
+                label = { Text("Sex (e.g., male, female)") },
                 modifier = Modifier.fillMaxWidth()
             )
+
+// Age Input
+            Spacer(modifier = Modifier.height(8.dp))
+            JayLabsTextField(
+                value = selectedAge,
+                onValueChange = { selectedAge = it },
+                label = { Text("Age") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+// Anatomical Site Input
+            Spacer(modifier = Modifier.height(8.dp))
+            JayLabsTextField(
+                value = selectedSite,
+                onValueChange = { selectedSite = it },
+                label = { Text("Anatomical Site (e.g., torso, head, etc.)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Submit Button with Improved Colors
             Button(
                 onClick = {
-                    viewModel.getSelectedUri(selectedImageUri)
+                    if (selectedAge.isNotBlank()) {
+                        viewModel.getResponse(
+                            imageUri = selectedImageUri,
+                            sex = selectedSex,
+                            age = selectedAge,
+                            anatomSite = selectedSite
+                        )
+                    } else {
+                        Toast.makeText(context, "Please enter age", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,7 +156,7 @@ fun HomeScreen(modifier: Modifier = Modifier,viewModel: HomeViewModel= hiltViewM
 
             is HomeViewModel.HomeEvent.Success -> {
                 LaunchedEffect(state) {
-                    val data = state.data.prediction
+                    val data = state.data
                     Toast.makeText(context, "Prediction $data", Toast.LENGTH_SHORT).show()
                     navController.navigate("${Route.ReportDetails.route}/$data")
                     viewModel.resetState()

@@ -1,4 +1,4 @@
-package com.example.jaylabs.mainapp
+package com.example.jaylabs.home.mainapp
 
 sealed class Route(val route: String) {
    data object AuthScreen : Route("auth_screen")

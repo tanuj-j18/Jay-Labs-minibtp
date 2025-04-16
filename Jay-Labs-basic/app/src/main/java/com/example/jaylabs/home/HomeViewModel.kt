@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jaylabs.models.ModelResponse
 import com.example.jaylabs.network.JayLabsApi
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,38 +24,84 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val jayLabsApi: JayLabsApi,
-    private val context: Application  // ✅ Inject Application safely
+    private val context: Application,  // ✅ Inject Application safely
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
     private val _modelResponse = MutableStateFlow<HomeEvent<ModelResponse>>(HomeEvent.Empty)
     val modelResponse = _modelResponse
-
+    val user=firebaseAuth.currentUser
     fun getSelectedUri(imageUri: Uri?) {
         getResponse(imageUri)
     }
 
-    fun getResponse(imageUri: Uri?) {
-        if(imageUri==null) return
+    fun getResponse(
+        imageUri: Uri?,
+        sex: String = "male",
+        age: String = "40",
+        anatomSite: String = "torso"
+    ) {
+        if (imageUri == null) return
         _modelResponse.value = HomeEvent.Loading
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val appContext = context as Context  // ✅ Cast Application to Context
-                val file = File(appContext.cacheDir, "upload.jpg") // Use app cache directory
+                val appContext = context as Context
+                val file = File(appContext.cacheDir, "upload.jpg")
 
                 appContext.contentResolver.openInputStream(imageUri)?.use { inputStream ->
                     file.outputStream().use { outputStream -> inputStream.copyTo(outputStream) }
                 }
 
                 val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-                val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
+                val filePart = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
-                val response = jayLabsApi.uploadImage(body)
+                // Form fields as RequestBody
+                val sexPart = RequestBody.create("text/plain".toMediaTypeOrNull(), sex)
+                val agePart = RequestBody.create("text/plain".toMediaTypeOrNull(), age)
+                val sitePart = RequestBody.create("text/plain".toMediaTypeOrNull(), anatomSite)
+
+                // API call
+                val response = jayLabsApi.uploadImage(
+                    file = filePart,
+                    sex = sexPart,
+                    age = agePart,
+                    anatomSite = sitePart
+                )
 
                 if (response.isSuccessful) {
-                    _modelResponse.value = HomeEvent.Success(response.body()!!)
-                    Log.d("jaylabs", response.body().toString())
-                } else {
+                    val responseBody = response.body()!!
+                    _modelResponse.value = HomeEvent.Success(responseBody)
+                    Log.d("jaylabs", responseBody.toString())
+
+                    // ✅ Save report to Firestore
+
+
+                    user?.uid?.let { userId ->
+                        val reportData = hashMapOf(
+                            "timestamp" to System.currentTimeMillis(),
+                            "sex" to sex,
+                            "age" to age,
+                            "anatomSite" to anatomSite,
+                            "melanomaProbability" to responseBody.diagnosis.Melanoma,
+                            "nevusProbability" to responseBody.diagnosis.Nevus,
+                            "interpretation" to responseBody.interpretation
+                        )
+
+                        firestore.collection("users")
+                            .document(userId)
+                            .collection("reports")
+                            .add(reportData)
+                            .addOnSuccessListener {
+                                Log.d("jaylabs", "Report added under user $userId with ID: ${it.id}")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("jaylabs", "Error adding user report to Firestore", e)
+                            }
+                    }
+                }
+                else {
                     _modelResponse.value = HomeEvent.Error("Server error: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
@@ -61,6 +109,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
     fun resetState() {
         _modelResponse.value = HomeEvent.Empty
     }

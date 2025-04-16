@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -15,8 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.jaylabs.mainapp.MainApp
-import com.example.jaylabs.mainapp.Route
+import com.example.jaylabs.home.mainapp.MainApp
+import com.example.jaylabs.home.mainapp.Route
 import com.example.jaylabs.ui.theme.JayLabsTheme
 import com.example.jaylabs.utils.DrawerContent
 import com.example.jaylabs.utils.JayLabsTopAppBar

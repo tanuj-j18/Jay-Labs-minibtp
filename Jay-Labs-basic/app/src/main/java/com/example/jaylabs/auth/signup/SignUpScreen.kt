@@ -27,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -39,7 +38,7 @@ import androidx.navigation.NavHostController
 
 import com.example.jaylabs.auth.AuthResult
 import com.example.jaylabs.R
-import com.example.jaylabs.mainapp.Route
+import com.example.jaylabs.home.mainapp.Route
 import com.example.jaylabs.ui.theme.Orange
 import com.example.jaylabs.utils.JayLabsTextField
 import com.example.jaylabs.utils.LoginOption

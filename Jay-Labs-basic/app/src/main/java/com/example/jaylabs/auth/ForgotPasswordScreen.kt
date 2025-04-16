@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.jaylabs.R
-import com.example.jaylabs.mainapp.Route
 import com.example.jaylabs.ui.theme.Orange
 import com.example.jaylabs.utils.JayLabsTextField
 
