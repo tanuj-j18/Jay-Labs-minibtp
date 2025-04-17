@@ -338,3 +338,4 @@ fun ReportDetailScreenErrorPreview() {
 //     val Melanoma: Double,
 //     val Nevus: Double
 // )
+//sure
