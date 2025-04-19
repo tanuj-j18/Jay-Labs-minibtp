@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Jay_Labs.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-17T16:28:15.522208Z">
+        <DropdownSelection timestamp="2025-04-18T19:16:52.142426700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=DYHQCICYTGSOBIXK" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jayta\.android\avd\Pixel_7_API_34.avd" />
             </handle>
           </Target>
         </DropdownSelection>
